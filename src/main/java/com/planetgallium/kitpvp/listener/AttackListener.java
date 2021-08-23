@@ -30,7 +30,8 @@ public class AttackListener implements Listener {
 			if (Toolkit.inArena(damagedPlayer) && !damagedPlayer.hasMetadata("NPC")) {
 				
 				if (resources.getConfig().getBoolean("Arena.NoKitProtection")) {
-					
+						if(Game.getInstance().getTeam(damagedPlayer)== Game.getInstance().getTeam(damager))
+						e.setCancelled(true);
 					if (!Game.getInstance().getArena().getKits().hasKit(damagedPlayer.getName())) {
 						
 						damager.sendMessage(resources.getMessages().getString("Messages.Error.Invincible"));
@@ -61,7 +62,6 @@ public class AttackListener implements Listener {
 			Player damagedPlayer = (Player) e.getEntity();
 			
 			if (Toolkit.inArena(damagedPlayer)) {
-				
 				if (resources.getConfig().getBoolean("Arena.NoKitProtection")) {
 					
 					if (!Game.getInstance().getArena().getKits().hasKit(damagedPlayer.getName())) {

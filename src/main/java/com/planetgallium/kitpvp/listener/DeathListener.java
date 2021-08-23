@@ -53,7 +53,6 @@ public class DeathListener implements Listener {
 			}
 
 			setDeathMessage(victim);
-			respawnPlayer(victim);
 
 			arena.getStats().addToStat("deaths", victim.getName(), 1);
 			arena.getStats().removeExperience(victim.getName(), resources.getLevels().getInt("Levels.Options.Experience-Taken-On-Death"));
@@ -78,15 +77,6 @@ public class DeathListener implements Listener {
 			if (!config.getBoolean("Arena.FancyDeath")) {
 
 				Player p = e.getPlayer();
-
-				new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						arena.toSpawn(p, p.getWorld().getName());
-					}
-
-				}.runTaskLater(Game.getInstance(), 1L);
 
 			}
 

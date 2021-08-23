@@ -18,6 +18,9 @@ import com.planetgallium.kitpvp.command.*;
 import com.planetgallium.kitpvp.game.Arena;
 import com.planetgallium.kitpvp.listener.*;
 import com.planetgallium.kitpvp.util.*;
+import com.snowgears.domination.game.BattleTeam;
+import com.snowgears.domination.game.DominationGame;
+import com.snowgears.domination.game.TeamManager;
 
 public class Game extends JavaPlugin implements Listener {
 	
@@ -32,6 +35,8 @@ public class Game extends JavaPlugin implements Listener {
 	private boolean needsUpdate = false;
 	private boolean hasPlaceholderAPI = false;
 	private boolean hasWorldGuard = false;
+	private TeamManager tm=null;
+	private DominationGame dm=null;
 	
 	@Override
 	public void onEnable() {
@@ -63,7 +68,8 @@ public class Game extends JavaPlugin implements Listener {
 		pm.registerEvents(new TrackerListener(this), this);
 		pm.registerEvents(new MenuListener(this), this);
 		pm.registerEvents(getArena().getKillStreaks(), this);
-		
+		tm=com.snowgears.domination.Domination.getPlugin().getDominationGame().getTeamManager();
+		dm=com.snowgears.domination.Domination.getPlugin().getDominationGame();
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 	    getCommand("kitpvp").setExecutor(new MainCommand(this));
 		
@@ -147,7 +153,10 @@ public class Game extends JavaPlugin implements Listener {
 		}
 		
 	}
-
+	public BattleTeam getTeam(Player p) {return tm.getCurrentTeam(p); }
+	
+	public boolean inProgress() {return dm.isInProgress(); }
+	
 	public boolean hasPlaceholderAPI() { return hasPlaceholderAPI; }
 
 	public boolean hasWorldGuard() { return hasWorldGuard; }

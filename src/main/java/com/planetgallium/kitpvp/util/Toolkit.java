@@ -42,24 +42,24 @@ public class Toolkit {
 		String nearest = "player:100000.0";
 		
 		for (Player all : Bukkit.getWorld(player.getWorld().getName()).getPlayers()) {
-			
-			String[] list = nearest.split(":");
-			double cal = player.getLocation().distance(all.getLocation());
-			
-			if (cal <= Double.parseDouble(list[1]) && all != player) {
-
-				if (all.getLocation().getBlockY() < maxY) {
-
-					if (all.getGameMode() != GameMode.SPECTATOR) {
-
-						nearest = all.getName() + ":" + cal;
-
-					}
-
-				}
+			if(Game.getInstance().getTeam(all)!= Game.getInstance().getTeam(player)) {
+				String[] list = nearest.split(":");
+				double cal = player.getLocation().distance(all.getLocation());
 				
-			}
-			
+				if (cal <= Double.parseDouble(list[1]) && all != player) {
+	
+					if (all.getLocation().getBlockY() < maxY) {
+	
+						if (all.getGameMode() != GameMode.SPECTATOR) {
+	
+							nearest = all.getName() + ":" + cal;
+	
+						}
+	
+					}
+					
+				}
+			}	
 		}
 		
 		if (nearest.equals("player:100000.0")) {

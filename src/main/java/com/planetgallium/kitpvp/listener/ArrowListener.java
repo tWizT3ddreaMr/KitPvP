@@ -37,7 +37,8 @@ public class ArrowListener implements Listener {
 					Player shooter = (Player) arrow.getShooter();
 					
 					// ARROW HEALTH MESSAGE
-					
+					if(Game.getInstance().getTeam(damagedPlayer)== Game.getInstance().getTeam(shooter))
+					e.setCancelled(true);
 					if (damagedPlayer.getName() != shooter.getName()) {
 						
 						new BukkitRunnable() {

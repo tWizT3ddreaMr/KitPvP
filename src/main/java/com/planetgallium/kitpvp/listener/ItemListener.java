@@ -54,11 +54,55 @@ public class ItemListener implements Listener {
 		Player p = e.getPlayer();
 
 		if (Toolkit.inArena(p) && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+			
 
 			ItemStack item = Toolkit.getMainHandItem(p);
 			ItemMeta meta = item.getItemMeta();
+			/* Kit Item and custom Arena Items */
 
-			if (item.getType() == XMaterial.SADDLE.parseMaterial()) {
+			if (config.contains("Items.Kits") &&
+					item.getType() == XMaterial.matchXMaterial(config.getString("Items.Kits.Material")).get().parseMaterial()) {
+
+				if (Toolkit.hasMatchingDisplayName(item, config.getString("Items.Kits.Name"))) {
+
+					Toolkit.runCommands(p, config.getStringList("Items.Kits.Commands"), "none", "none");
+
+					if (config.getBoolean("Items.Kits.Menu")) {
+						arena.getMenus().getKitMenu().open(p);
+					}
+
+					e.setCancelled(true);
+
+				}
+
+			} else if (item.hasItemMeta()) {
+
+				ConfigurationSection items = config.getConfigurationSection("Items");
+
+				for (String identifier : items.getKeys(false)) {
+
+					String itemPath = "Items." + identifier;
+
+					if (config.getBoolean(itemPath + ".Enabled")) {
+
+						if (item.getType() == XMaterial.matchXMaterial(config.getString(itemPath + ".Material")).get().parseMaterial()) {
+
+							if (Toolkit.hasMatchingDisplayName(item, config.getString(itemPath + ".Name"))) {
+
+								Toolkit.runCommands(p, config.getStringList(itemPath + ".Commands"), "none", "none");
+								e.setCancelled(true);
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+			if(!Game.getInstance().inProgress()) {}
+			else if (item.getType() == XMaterial.SADDLE.parseMaterial()) {
 
 				if (isAbilityItem(p, "Kangaroo", item)) {
 
@@ -146,12 +190,13 @@ public class ItemListener implements Listener {
 			} else if (item.getType() == XMaterial.NETHER_STAR.parseMaterial()) {
 
 				if (isAbilityItem(p, "Ninja", item)) {
-
+					
 					ItemStack previousHelmet = p.getInventory().getHelmet();
 					ItemStack previousChestplate = p.getInventory().getChestplate();
 					ItemStack previousLeggings = p.getInventory().getLeggings();
 					ItemStack previousBoots = p.getInventory().getBoots();
-
+					
+					p.setInvisible(true);
 					p.getInventory().setArmorContents(null);
 
 					for (Entity entity : p.getNearbyEntities(3, 3, 3)) {
@@ -159,7 +204,8 @@ public class ItemListener implements Listener {
 						if (entity instanceof Player) {
 
 							Player nearby = (Player) entity;
-
+							if(Game.getInstance().getTeam(p)== Game.getInstance().getTeam(nearby))
+								e.setCancelled(true);
 							nearby.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
 							nearby.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 0));
 
@@ -179,6 +225,7 @@ public class ItemListener implements Listener {
 
 							if (arena.getKits().hasKit(p.getName())) {
 
+								p.setInvisible(false);
 								p.getInventory().setHelmet(previousHelmet);
 								p.getInventory().setChestplate(previousChestplate);
 								p.getInventory().setLeggings(previousLeggings);
@@ -268,49 +315,6 @@ public class ItemListener implements Listener {
 
 			}
 
-			/* Kit Item and custom Arena Items */
-
-			if (config.contains("Items.Kits") &&
-					item.getType() == XMaterial.matchXMaterial(config.getString("Items.Kits.Material")).get().parseMaterial()) {
-
-				if (Toolkit.hasMatchingDisplayName(item, config.getString("Items.Kits.Name"))) {
-
-					Toolkit.runCommands(p, config.getStringList("Items.Kits.Commands"), "none", "none");
-
-					if (config.getBoolean("Items.Kits.Menu")) {
-						arena.getMenus().getKitMenu().open(p);
-					}
-
-					e.setCancelled(true);
-
-				}
-
-			} else if (item.hasItemMeta()) {
-
-				ConfigurationSection items = config.getConfigurationSection("Items");
-
-				for (String identifier : items.getKeys(false)) {
-
-					String itemPath = "Items." + identifier;
-
-					if (config.getBoolean(itemPath + ".Enabled")) {
-
-						if (item.getType() == XMaterial.matchXMaterial(config.getString(itemPath + ".Material")).get().parseMaterial()) {
-
-							if (Toolkit.hasMatchingDisplayName(item, config.getString(itemPath + ".Name"))) {
-
-								Toolkit.runCommands(p, config.getStringList(itemPath + ".Commands"), "none", "none");
-								e.setCancelled(true);
-
-							}
-
-						}
-
-					}
-
-				}
-
-			}
 			
 		}
 		
@@ -321,11 +325,13 @@ public class ItemListener implements Listener {
 
 		Player p = e.getPlayer();
 
-		if (Toolkit.inArena(p) && e.getRightClicked().getType() == EntityType.PLAYER) {
-
+		if (Toolkit.inArena(p) && e.getRightClicked().getType() == EntityType.PLAYER && Game.getInstance().inProgress()) {
+ 
 			ItemStack item = Toolkit.getMainHandItem(p);
 			Player damagedPlayer = (Player) e.getRightClicked();
-
+			if(Game.getInstance().getTeam(damagedPlayer)== Game.getInstance().getTeam(p))
+			return;
+			
 			if (config.getBoolean("Arena.NoKitProtection")) {
 
 				if (!arena.getKits().hasKit(damagedPlayer.getName())) {
@@ -425,8 +431,8 @@ public class ItemListener implements Listener {
 			Player p = (Player) e.getEntity();
 			
 			if (Toolkit.inArena(p)) {
-				
-				if (p.hasPermission("kp.ability.archer")) {
+				if(!Game.getInstance().inProgress()) {e.setCancelled(true);}
+				else if (p.hasPermission("kp.ability.archer")) {
 
 					int ammoSlot = getItemByMeta(Material.MAGMA_CREAM, abilities.getString("Abilities.Archer.Item.Fire"), p);
 
@@ -517,8 +523,8 @@ public class ItemListener implements Listener {
 					}
 
 				} else if (e.getEntity().getType() == EntityType.EGG) {
-
-					if (arena.getKits().hasKit(shooter.getName()) &&
+					if(!Game.getInstance().inProgress()) {e.setCancelled(true);}
+					else if (arena.getKits().hasKit(shooter.getName()) &&
 							arena.getKits().getKitOfPlayer(shooter.getName()).getName().equals("Trickster")) {
 						if (isAbilityItem(shooter, "Trickster", itemThrown)) {
 							e.getEntity().setCustomName("pellet");
@@ -559,15 +565,19 @@ public class ItemListener implements Listener {
 				
 				Player damagedPlayer = (Player) e.getEntity();
 				Snowball snowball = (Snowball) e.getDamager();
-
+				
 				if (snowball.getCustomName() != null && snowball.getCustomName().equals("bullet")) {
+					if(snowball.getShooter() instanceof Player) {
+						Player shooter=(Player) snowball.getShooter();
+						if(Game.getInstance().getTeam(damagedPlayer)== Game.getInstance().getTeam(shooter))
+						e.setCancelled(true);
+						if (Toolkit.inArena(damagedPlayer) && arena.getKits().hasKit(damagedPlayer.getName())) {
 
-					if (Toolkit.inArena(damagedPlayer) && arena.getKits().hasKit(damagedPlayer.getName())) {
+							damagedPlayer.damage(4.5);
 
-						damagedPlayer.damage(4.5);
+						}
 
 					}
-
 				}
 				
 			} else if (e.getDamager() instanceof Egg) {
@@ -588,19 +598,19 @@ public class ItemListener implements Listener {
 								shooter.sendMessage(resources.getMessages().getString("Messages.Error.PVP"));
 								return;
 							}
-
-							shooter.teleport(damagedPlayer);
-							damagedPlayer.teleport(shooterLocation);
-
-							if (abilities.getBoolean("Abilities.Trickster.Message.Enabled")) {
-								shooter.sendMessage(Toolkit.translate(abilities.getString("Abilities.Trickster.Message.Message").replace("%player%", damagedPlayer.getName())));
+							if(Game.getInstance().getTeam(damagedPlayer)!= Game.getInstance().getTeam(shooter)) {
+								shooter.teleport(damagedPlayer);
+								damagedPlayer.teleport(shooterLocation);
+	
+								if (abilities.getBoolean("Abilities.Trickster.Message.Enabled")) {
+									shooter.sendMessage(Toolkit.translate(abilities.getString("Abilities.Trickster.Message.Message").replace("%player%", damagedPlayer.getName())));
+								}
+	
+								if (abilities.getBoolean("Abilities.Trickster.Sound.Enabled")) {
+									XSound.play(shooter, abilities.getString("Abilities.Trickster.Sound.Sound") + ", 1, " + abilities.getInt("Abilities.Trickster.Sound.Pitch"));
+									XSound.play(damagedPlayer, abilities.getString("Abilities.Trickster.Sound.Sound") + ", 1, " + abilities.getInt("Abilities.Trickster.Sound.Pitch"));
+								}
 							}
-
-							if (abilities.getBoolean("Abilities.Trickster.Sound.Enabled")) {
-								XSound.play(shooter, abilities.getString("Abilities.Trickster.Sound.Sound") + ", 1, " + abilities.getInt("Abilities.Trickster.Sound.Pitch"));
-								XSound.play(damagedPlayer, abilities.getString("Abilities.Trickster.Sound.Sound") + ", 1, " + abilities.getInt("Abilities.Trickster.Sound.Pitch"));
-							}
-
 						}
 
 					}
@@ -618,7 +628,7 @@ public class ItemListener implements Listener {
 		PotionType potion = null;
 		
 		Random ran = new Random();
-		int chance = ran.nextInt(100);
+		int chance = ran.nextInt(120);
 		
 		if (chance < 10) {
 			
@@ -638,11 +648,15 @@ public class ItemListener implements Listener {
 			
 		} else if (chance < 80) {
 			
-			potion = PotionType.SPEED;
+			potion = PotionType.STRENGTH;
 			
 		} else if (chance < 100) {
 			
 			potion = PotionType.SLOWNESS;
+			
+		} else if (chance < 120) {
+			
+			potion = PotionType.TURTLE_MASTER;
 			
 		}
 		

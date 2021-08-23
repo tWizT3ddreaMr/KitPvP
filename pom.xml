@@ -66,7 +66,7 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <outputFile>/Users/nico/Developer/SpigotL/plugins/${project.artifactId}.jar</outputFile>
+                            <outputFile>C:/Users/kevin/Documents/NewWorkspace/KitPvP-master/out/${project.artifactId}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -110,6 +110,13 @@
             <artifactId>XSeries</artifactId>
             <version>7.9.1.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.snowgears.shop</groupId>
+            <artifactId>Shop</artifactId>
+            <scope>system</scope>
+            <version>any</version>
+            <systemPath>C:/Users/kevin/Desktop/Domination.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>

@@ -6,7 +6,7 @@ description: The ultimate all-in-one KitPvP plugin.
 website: https://www.spigotmc.org/resources/27107/
 softdepend: [PlaceholderAPI, WorldGuard]
 api-version: 1.13
-
+depend: [Domination]
 commands:
    kitpvp:
      description: Main command.
