@@ -15,6 +15,6 @@ An all-in-one battle plugin built using customizable kits and features.
 
 ## My changes 
 * [Made to work with Domination better](https://www.spigotmc.org/resources/domination-official-twitch-rivals-capture-the-point-mini-game.27977/)
-* - Team battle exist
-* - Abilities don't work against team members
-* - Doesn't handle respawns
+ - Team battle exist
+ - Abilities don't work against team members
+ - Doesn't handle respawns
