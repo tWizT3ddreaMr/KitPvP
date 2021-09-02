@@ -12,3 +12,9 @@ An all-in-one battle plugin built using customizable kits and features.
 * [Plugin Page](https://www.spigotmc.org/resources/27107/)
 * [Wiki](https://github.com/cervinakuy/KitPvP/wiki)
 * [Support Discord](https://discord.gg/Hfej6UR8Bk)
+
+## My changes 
+* [Made to work with Domination better](https://www.spigotmc.org/resources/domination-official-twitch-rivals-capture-the-point-mini-game.27977/)
+ -- Team battle exist
+ -- Abilities don't work against team members
+ -- Doesn't handle respawns
