@@ -74,13 +74,7 @@ public class Game extends JavaPlugin implements Listener {
 	    getCommand("kitpvp").setExecutor(new MainCommand(this));
 		
 		new Metrics(this);
-		
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				checkUpdate();
-			}
-		}.runTaskAsynchronously(this);
+
 		
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 			Bukkit.getConsoleSender().sendMessage(Toolkit.translate("[&b&lKIT-PVP&7] &7Hooking into &bPlaceholderAPI&7..."));
