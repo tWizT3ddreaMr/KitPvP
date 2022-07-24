@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.planetgallium</groupId>
-    <version></version>
+    <version>2.1.9</version>
     <artifactId>KitPvP</artifactId>
     <packaging>jar</packaging>
 
@@ -66,7 +66,7 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <outputFile>C:/Users/kevin/Documents/NewWorkspace/KitPvP-master/out/${project.artifactId}.jar</outputFile>
+                            <outputFile>${env.HOME}/out/${project.artifactId}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -98,6 +98,12 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.0.0</version>
             <scope>provided</scope>
+		      <exclusions>
+		        <exclusion>
+		          <groupId>org.bstats</groupId>
+		          <artifactId>bstats-bukkit</artifactId>
+		        </exclusion>
+		      </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
@@ -116,7 +122,7 @@
             <artifactId>Shop</artifactId>
             <scope>system</scope>
             <version>any</version>
-            <systemPath>C:/Users/kevin/Desktop/Domination.jar</systemPath>
+            <systemPath>${env.HOME}/dependencies/Domination.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
